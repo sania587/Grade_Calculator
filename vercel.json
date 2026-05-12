@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "outputDirectory": "public",
+  "name": "student-grade-calculator",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

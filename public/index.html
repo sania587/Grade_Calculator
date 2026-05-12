@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Grade Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg: #0F172A;
+            --surface: #1E293B;
+            --text: #F8FAFC;
+            --text-muted: #94A3B8;
+            --accent: #10B981;
+            --error: #EF4444;
+            --border: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--surface);
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid var(--border);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            background: linear-gradient(135deg, #818CF8, #34D399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p.subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background-color: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+        }
+
+        .subject-list {
+            margin-bottom: 1.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .subject-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .subject-list::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+
+        .subject-row {
+            display: grid;
+            grid-template-columns: 1fr 80px;
+            gap: 12px;
+            margin-bottom: 12px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            font-family: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-add {
+            background-color: transparent;
+            border: 2px dashed var(--border);
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-add:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background-color: rgba(79, 70, 229, 0.05);
+        }
+
+        .btn-calc {
+            background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+            color: white;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-calc:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 25px -5px rgba(79, 70, 229, 0.4);
+        }
+
+        .results {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px;
+            display: none;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(16, 185, 129, 0.1);
+        }
+
+        .result-label { color: var(--text-muted); }
+        .result-value { font-weight: 800; color: var(--accent); }
+
+        .grade-badge {
+            font-size: 1.5rem;
+            color: var(--accent);
+        }
+
+        .footer {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Grade Calculator</h1>
+    <p class="subtitle">Enter your subject marks out of 100</p>
+
+    <div id="subjectContainer" class="subject-list">
+        <div class="subject-row">
+            <input type="text" placeholder="Subject Name (e.g. Math)" class="sub-name">
+            <input type="number" placeholder="Marks" class="sub-marks" min="0" max="100">
+        </div>
+        <div class="subject-row">
+            <input type="text" placeholder="Subject Name (e.g. Physics)" class="sub-name">
+            <input type="number" placeholder="Marks" class="sub-marks" min="0" max="100">
+        </div>
+    </div>
+
+    <button class="btn-add" onclick="addSubject()">
+        <span>+</span> Add Subject
+    </button>
+
+    <button class="btn-calc" onclick="calculate()">
+        Calculate Results
+    </button>
+
+    <div id="results" class="results">
+        <div class="result-item">
+            <span class="result-label">Total Marks:</span>
+            <span id="totalMarks" class="result-value">0</span>
+        </div>
+        <div class="result-item">
+            <span class="result-label">Average Percentage:</span>
+            <span id="avgPercent" class="result-value">0%</span>
+        </div>
+        <div class="result-item">
+            <span class="result-label">Final Grade:</span>
+            <span id="finalGrade" class="result-value grade-badge">-</span>
+        </div>
+    </div>
+
+    <div class="footer">
+        Based on Student_Grade_Calculator.java logic
+    </div>
+</div>
+
+<script>
+    function addSubject() {
+        const container = document.getElementById('subjectContainer');
+        const div = document.createElement('div');
+        div.className = 'subject-row';
+        div.innerHTML = `
+            <input type="text" placeholder="Subject Name" class="sub-name">
+            <input type="number" placeholder="Marks" class="sub-marks" min="0" max="100">
+        `;
+        container.appendChild(div);
+        // Scroll to bottom
+        container.scrollTop = container.scrollHeight;
+    }
+
+    function calculate() {
+        const marksInputs = document.querySelectorAll('.sub-marks');
+        let total = 0;
+        let count = 0;
+        let isValid = true;
+
+        marksInputs.forEach(input => {
+            const val = parseFloat(input.value);
+            if (!isNaN(val)) {
+                if (val < 0 || val > 100) {
+                    alert("Marks must be between 0 and 100");
+                    isValid = false;
+                    return;
+                }
+                total += val;
+                count++;
+            }
+        });
+
+        if (!isValid) return;
+        if (count === 0) {
+            alert("Please enter at least one subject with marks.");
+            return;
+        }
+
+        const average = total / count;
+        let grade = '';
+
+        // Matching Java logic
+        if (average >= 95) grade = 'A+';
+        else if (average >= 90) grade = 'A';
+        else if (average >= 80) grade = 'B';
+        else if (average >= 70) grade = 'C';
+        else if (average >= 60) grade = 'D';
+        else grade = 'F';
+
+        document.getElementById('totalMarks').textContent = total;
+        document.getElementById('avgPercent').textContent = average.toFixed(2) + '%';
+        document.getElementById('finalGrade').textContent = grade;
+        
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.style.display = 'block';
+        resultsDiv.style.animation = 'fadeIn 0.4s ease-out';
+    }
+</script>
+
+</body>
+</html>
